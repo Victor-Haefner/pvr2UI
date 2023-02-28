@@ -44,7 +44,7 @@ void MainLoopStepUI();
 void MainLoopStepGL();
 
 static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-static int topWinSize[] = { 800, 800 };
+static int topWinSize[] = { 1200, 800 };
 static int topWin = -1;
 static int winGL = -1;
 static int winUI = -1;
@@ -64,14 +64,17 @@ void on_resize_window(int w, int h) {
     glutSetWindow(winUI);
     glutReshapeWindow(topWinSize[0], topWinSize[1]);
     resizeUI({0,0,topWinSize[0], topWinSize[1]});
-
-    glArea.surface.compute({ 0,0, topWinSize[0], topWinSize[1] }, glArea.layout);
     updateGLWindow();
 }
 
 int runGlut(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_MULTISAMPLE);
+
+    topWinSize[0] = glutGet(GLUT_SCREEN_WIDTH);
+    topWinSize[1] = glutGet(GLUT_SCREEN_HEIGHT);
+    resizeUI({0,0,topWinSize[0],topWinSize[1]});
+
     glutInitWindowSize(topWinSize[0], topWinSize[1]);
     topWin = glutCreateWindow("Dear ImGui GLUT+OpenGL2 Example");
 
@@ -93,7 +96,7 @@ int runGlut(int argc, char** argv) {
     // Load Fonts
     // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
     // - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
-    // - If the file cannot be loaded, the function will return NULL. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
+    // - If the file cannot betopWinSize loaded, the function will return NULL. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
     // - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
     // - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
     // - Read 'docs/FONTS.md' for more instructions and details.

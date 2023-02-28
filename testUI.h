@@ -28,11 +28,6 @@ void cleanupUI() {
 }
 
 
-bool show_main_pannel = true;
-bool show_demo_window = false;
-
-// https://gitlab.vci.rwth-aachen.de:9000/ptrettner/imgui-lean/-/blob/master/src/imgui/imgui_demo.cpp
-
 struct Rectangle {
     float left = 0;
     float right = 1;
@@ -49,6 +44,8 @@ struct Surface {
     void compute(const Surface& parent, const Rectangle& area) {
         width  = round( parent.width * (area.right - area.left) );
         height = round( parent.height * (area.top - area.bottom) );
+        width = max(width, 10);
+        height = max(height, 10);
         x = round( parent.width * area.left );
         y = round( parent.height * (1.0 - area.top) );
     }
@@ -162,10 +159,10 @@ struct Widget {
     }
 };
 
-Widget toolbar("Toolbar", {0,1,0.9,1});
-Widget sidePannel("SidePannel", {0,0.3,0,0.9});
+Widget toolbar("Toolbar", {0,1,0.95,1});
+Widget sidePannel("SidePannel", {0,0.3,0,0.95});
 Widget consoles("Consoles", {0.3,1.0,0,0.3});
-Widget glArea("glArea", {0.3,1,0.3,0.9});
+Widget glArea("glArea", {0.3,1,0.3,0.95});
 
 void updateGLWindow();
 
@@ -196,28 +193,62 @@ void resolveResize(const string& name, const ResizeEvent& resizer) {
     }
 }
 
-void renderUI() {
 
-    //ImGui::ShowDemoWindow(&show_demo_window);
+// https://gitlab.vci.rwth-aachen.de:9000/ptrettner/imgui-lean/-/blob/master/src/imgui/imgui_demo.cpp
 
-    //toolbar.flags |= ImGuiWindowFlags_MenuBar;
-
-    toolbar.begin();
-    ImGui::Text("Hello from another window!");
-    if (ImGui::Button("Test"));
-    toolbar.end();
-
+void renderSidePannel() {
     sidePannel.begin();
-    ImGui::Text("Hello from another window!");
-    if (ImGui::Button("Test"));
+    ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+    if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
+        if (ImGui::BeginTabItem("Apps")) {
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Setup")) {
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Scene")) {
+            ImGui::EndTabItem();
+        }
+        ImGui::EndTabBar();
+    }
+
     sidePannel.end();
+}
 
+void renderToolbar() {
+    toolbar.begin();
+    if (ImGui::Button("New"));
+    ImGui::SameLine();
+    if (ImGui::Button("Open"));
+    ImGui::SameLine();
+    if (ImGui::Button("Save"));
+    ImGui::SameLine();
+    if (ImGui::Button("Save.."));
+    ImGui::SameLine();
+    if (ImGui::Button("Close"));
+    ImGui::SameLine();
+    if (ImGui::Button("Exit"));
+    ImGui::SameLine();
+    if (ImGui::Button("About"));
+    ImGui::SameLine();
+    if (ImGui::Button("Stats"));
+    toolbar.end();
+}
+
+void renderConsoles() {
     consoles.begin();
-    ImGui::Text("Hello from another window!");
-    if (ImGui::Button("Test"));
+    ImGui::ShowExampleAppConsole(0);
     consoles.end();
+}
 
-    // Render dear imgui into screen
+void renderUI() {
+    renderToolbar();
+    renderSidePannel();
+    renderConsoles();
+
+    ImGui::ShowDemoWindow(0);
     ImGui::Render();
 }
 
@@ -225,6 +256,7 @@ void resizeUI(const Surface& parent) {
     toolbar.resize(parent);
     sidePannel.resize(parent);
     consoles.resize(parent);
+    glArea.resize(parent);
 }
 
 #endif // TESTUI_H_INCLUDED
