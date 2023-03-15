@@ -10,9 +10,6 @@ Editor::~Editor() {}
 void Editor::runWindow(int argc, char** argv) {
     auto sig = [&](string name, map<string,string> opts) -> bool { return trigger(name,opts); };
     auto sig2 = [&](string name, Surface s) -> bool { return triggerResize(name,s); };
-    glut.init(argc, argv, sig, sig2);
-    initTestScene();
-    imgui.init(sig, sig2);
 
     addCallback("glutRenderUI", [&](Options){ imgui.render(); return true; } );
     addCallback("glutRenderGL", [&](Options){ imgui.renderGLArea(); return true; } );
@@ -20,8 +17,12 @@ void Editor::runWindow(int argc, char** argv) {
     addResizeCallback("glutResize", [&](Surface s){ imgui.resizeUI(s); return true; } );
     addResizeCallback("glAreaResize", [&](Surface s){ glut.updateGLWindow(s); return true; } );
 
+    glut.init(argc, argv, sig, sig2);
+    glut.activateWindow(3);
+    initTestScene();
+    glut.activateWindow(2);
+    imgui.init(sig, sig2);
     verbose = true;
-
     glut.run();
 }
 
@@ -63,7 +64,4 @@ bool Editor::triggerResize(string name, Surface surface) {
     }
 
     return true;
-}
-
-void Editor::runUI() {
 }

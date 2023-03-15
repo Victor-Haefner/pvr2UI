@@ -34,6 +34,7 @@ void Glut::on_resize_window(int w, int h) {
 }
 
 void Glut::on_gl_display() {
+    if (winGL < 0) return;
     glutSetWindow(winGL);
     signal( "glutRenderGL", {} );
     glutSwapBuffers();
@@ -76,9 +77,15 @@ void Glut::init(int argc, char** argv, Signal signal, ResizeSignal resizeSignal)
     winUI = glutCreateSubWindow(topWin, 0, 0, topWinSize[0], topWinSize[1]);
     glutDisplayFunc( onUIDisplay );
 
-    /*glutSetWindow(topWin);
+    glutSetWindow(topWin);
     winGL = glutCreateSubWindow(topWin, 0,0,800,800);
-    glutDisplayFunc( onGLDisplay );*/
+    glutDisplayFunc( onGLDisplay );
+}
+
+void Glut::activateWindow(int i) {
+    if (i == 1 && topWin > 0) glutSetWindow(topWin);
+    if (i == 2 && winUI > 0) glutSetWindow(winUI);
+    if (i == 3 && winGL > 0) glutSetWindow(winGL);
 }
 
 void Glut::run() {

@@ -52,6 +52,7 @@
 		<Unit filename="editor/window/glut.h" />
 		<Unit filename="editor/window/layout.cpp" />
 		<Unit filename="editor/window/layout.h" />
+		<Unit filename="editor/window/testGL.cpp" />
 		<Unit filename="editor/window/widget.cpp" />
 		<Unit filename="editor/window/widget.h" />
 		<Unit filename="main.cpp" />

@@ -26,6 +26,8 @@ class Glut {
         void init(int argc, char** argv, Signal signal, ResizeSignal resizeSignal);
         void run();
 
+        void activateWindow(int i); // 1 top, 2 ui, 3 gl
+
         void on_resize_window(int w, int h);
         void on_ui_display();
         void on_gl_display();

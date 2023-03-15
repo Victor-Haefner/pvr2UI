@@ -123,7 +123,7 @@ void Imgui::resizeUI(const Surface& parent) {
     sidePannel.resize(parent);
     consoles.resize(parent);
     glArea.resize(parent);
-    resizeSignal("glAreaResize", glArea.surface);
+    if (resizeSignal) resizeSignal("glAreaResize", glArea.surface);
 }
 
 void Imgui::onWidgetResize(map<string,string> options) {
@@ -146,7 +146,7 @@ void Imgui::render() {
     renderSidePannel();
     renderConsoles();
 
-    ImGui::ShowDemoWindow(0);
+    //ImGui::ShowDemoWindow(0);
 
     // Rendering
     ImGui::Render();

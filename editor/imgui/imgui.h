@@ -66,7 +66,7 @@ class ImWidget : public Widget {
             io.ConfigWindowsResizeFromEdges = true;
 
             char edge = resizer.changed();
-            string sedge = "" + edge;
+            string sedge = string( 1, edge );
 
             if (edge != 0) signal("widgetResize", {{"name",name},{"edge",sedge}} );
         }
