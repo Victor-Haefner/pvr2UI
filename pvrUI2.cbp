@@ -40,11 +40,21 @@
 			<Add option="-lGLEW" />
 			<Add option="-lGL" />
 		</Linker>
+		<Unit filename="editor/editor.cpp" />
+		<Unit filename="editor/editor.h" />
+		<Unit filename="editor/imgui/imEditor/TextEditor.cpp" />
+		<Unit filename="editor/imgui/imgui.cpp" />
+		<Unit filename="editor/imgui/imgui.h" />
+		<Unit filename="editor/library/launcher.cpp" />
+		<Unit filename="editor/library/launcher.h" />
+		<Unit filename="editor/library/library.h" />
+		<Unit filename="editor/window/glut.cpp" />
+		<Unit filename="editor/window/glut.h" />
+		<Unit filename="editor/window/layout.cpp" />
+		<Unit filename="editor/window/layout.h" />
+		<Unit filename="editor/window/widget.cpp" />
+		<Unit filename="editor/window/widget.h" />
 		<Unit filename="main.cpp" />
-		<Unit filename="testGL.h" />
-		<Unit filename="testGLFW.h" />
-		<Unit filename="testGlut.h" />
-		<Unit filename="testUI.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

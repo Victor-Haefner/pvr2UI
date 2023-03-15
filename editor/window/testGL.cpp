@@ -1,6 +1,4 @@
-#ifndef TESTGL_H_INCLUDED
-#define TESTGL_H_INCLUDED
-
+#include "testGL.h"
 #include <GL/glew.h>
 
 static const struct
@@ -37,7 +35,7 @@ static const char* fragment_shader_text =
 GLuint vertex_buffer, vertex_shader, fragment_shader, program;
 GLint mvp_location, vpos_location, vcol_location;
 
-void initScene() {
+void initTestScene() {
     glewInit();
 
     glGenBuffers(1, &vertex_buffer);
@@ -75,5 +73,3 @@ void renderScene() {
     glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
-
-#endif // TESTGL_H_INCLUDED
