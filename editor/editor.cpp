@@ -2,6 +2,7 @@
 #include "window/testGL.h"
 
 #include <iostream>
+#include <thread>
 
 Editor::Editor() {}
 
@@ -23,7 +24,16 @@ void Editor::runWindow(int argc, char** argv) {
     glut.activateWindow(2);
     imgui.init(sig, sig2);
     verbose = true;
-    glut.run();
+
+    runMainLoop();
+    //glut.run();
+}
+
+void Editor::runMainLoop() {
+    while(true) {
+        glut.render();
+        this_thread::sleep_for(chrono::milliseconds(16));
+    }
 }
 
 void Editor::setVerbose(bool b) { verbose = b; }

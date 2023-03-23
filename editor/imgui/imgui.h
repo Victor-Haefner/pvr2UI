@@ -15,20 +15,20 @@ struct ResizeEvent {
     ImVec2 size;
     ImVec2 pos;
 
-    char changed() {
+    vector<char> changed() {
+        vector<char> edges;
         ImVec2 s = ImGui::GetWindowSize();
         ImVec2 p = ImGui::GetWindowPos();
-        if (s.x == size.x && s.y == size.y) return 0;
+        if (s.x == size.x && s.y == size.y) return edges;
 
-        char edge = 0;
-        if (p.x != pos.x && s.x != size.x) edge = 'L';
-        if (p.x == pos.x && s.x != size.x) edge = 'R';
-        if (p.y != pos.y && s.y != size.y) edge = 'T';
-        if (p.y == pos.y && s.y != size.y) edge = 'B';
+        if (p.x != pos.x && s.x != size.x) edges.push_back('L');
+        if (p.x == pos.x && s.x != size.x) edges.push_back('R');
+        if (p.y != pos.y && s.y != size.y) edges.push_back('T');
+        if (p.y == pos.y && s.y != size.y) edges.push_back('B');
 
         size = s;
         pos = p;
-        return edge;
+        return edges;
     }
 };
 
@@ -65,10 +65,10 @@ class ImWidget : public Widget {
             ImGuiIO& io = ImGui::GetIO();
             io.ConfigWindowsResizeFromEdges = true;
 
-            char edge = resizer.changed();
-            string sedge = string( 1, edge );
-
-            if (edge != 0) signal("widgetResize", {{"name",name},{"edge",sedge}} );
+            for (char edge: resizer.changed()) {
+                string sedge = string( 1, edge );
+                signal("widgetResize", {{"name",name},{"edge",sedge}} );
+            }
         }
 
         void end() {

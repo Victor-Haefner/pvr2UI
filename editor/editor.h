@@ -23,6 +23,8 @@ class Editor {
 
         bool verbose = false;
 
+        void runMainLoop();
+
     public:
         Editor();
         ~Editor();

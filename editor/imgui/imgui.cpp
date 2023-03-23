@@ -138,6 +138,9 @@ void Imgui::onWidgetResize(map<string,string> options) {
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 void Imgui::render() {
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.DisplaySize.x < 0 || io.DisplaySize.y < 0) return;
+
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL2_NewFrame();
     ImGui_ImplGLUT_NewFrame();
@@ -150,8 +153,8 @@ void Imgui::render() {
 
     // Rendering
     ImGui::Render();
-    ImGuiIO& io = ImGui::GetIO();
     glViewport(0, 0, (GLsizei)io.DisplaySize.x, (GLsizei)io.DisplaySize.y);
+
     glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
     //glUseProgram(0); // You may want this if using this code in an OpenGL 3+ context where shaders may be bound, but prefer using the GL3+ code.
