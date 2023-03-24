@@ -18,6 +18,8 @@ ostream& operator<<(ostream& os, const ImVec2& s) {
     return os;
 }
 
+ostream& operator<<(ostream& os, const Surface& s);
+
 void Imgui::init(Signal signal, ResizeSignal resizeSignal) {
     this->signal = signal;
     this->resizeSignal = resizeSignal;
@@ -47,7 +49,7 @@ void Imgui::close() {
 }
 
 void Imgui::resolveResize(const string& name, const ResizeEvent& resizer) {
-    cout << "resolveResize " << name << ", " << resizer << endl;
+    cout << "     resolveResize " << name << ", " << resizer << endl;
     if (name == "SidePannel") {
         sidePannel.updateLayout({ resizer.pos.x, resizer.pos.y, resizer.size.x, resizer.size.y });
         consoles.layout.left = sidePannel.layout.right;
@@ -119,6 +121,7 @@ void Imgui::renderConsoles() {
 }
 
 void Imgui::resizeUI(const Surface& parent) {
+    cout << "    Imgui::resizeUI " << endl;
     toolbar.resize(parent);
     sidePannel.resize(parent);
     consoles.resize(parent);
@@ -126,10 +129,15 @@ void Imgui::resizeUI(const Surface& parent) {
     if (resizeSignal) resizeSignal("glAreaResize", glArea.surface);
 }
 
+void Imgui::resizeGL(const Surface& parent) { // on resize
+    cout << "    Imgui::resizeGL " << endl;
+    glAreaWindow = parent;
+}
+
 void Imgui::onWidgetResize(map<string,string> options) {
     string name = options["name"];
     char edge = options["edge"][0];
-    cout << " Imgui::onWidgetResize " << name << ", " << edge << endl;
+    cout << "    Imgui::onWidgetResize " << name << ", " << edge << endl;
     if (name == "Toolbar" && edge == 'B') resolveResize(name, toolbar.resizer);
     if (name == "SidePannel" && (edge == 'T' || edge == 'R')) resolveResize(name, sidePannel.resizer);
     if (name == "Consoles" && (edge == 'T' || edge == 'L')) resolveResize(name, consoles.resizer);
@@ -140,6 +148,7 @@ ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 void Imgui::render() {
     ImGuiIO& io = ImGui::GetIO();
     if (io.DisplaySize.x < 0 || io.DisplaySize.y < 0) return;
+    cout << "   Imgui::render " << endl;
 
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL2_NewFrame();
@@ -155,6 +164,7 @@ void Imgui::render() {
     ImGui::Render();
     glViewport(0, 0, (GLsizei)io.DisplaySize.x, (GLsizei)io.DisplaySize.y);
 
+    cout << "    Imgui::render draw" << endl;
     glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
     //glUseProgram(0); // You may want this if using this code in an OpenGL 3+ context where shaders may be bound, but prefer using the GL3+ code.
@@ -164,8 +174,12 @@ void Imgui::render() {
 }
 
 void Imgui::renderGLArea() {
-    glViewport(0, 0, glArea.surface.width, glArea.surface.height);
-    glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+    tmpC += 0.1;
+    //cout << "   Imgui::renderGLArea " << w << ", " << h << " ... " << glAreaWindow << endl;
+    glViewport(0, 0, glAreaWindow.width, glAreaWindow.height);
+    //glViewport(0, glAreaWindow.height-300, glAreaWindow.width, 300);
+    //glViewport(0, h-300, w, 300);
+    glClearColor(tmpC * clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
     renderScene();
 }

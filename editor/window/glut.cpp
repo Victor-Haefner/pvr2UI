@@ -13,9 +13,11 @@
 #pragma warning (disable: 4505) // unreferenced local function has been removed
 #endif
 
+ostream& operator<<(ostream& os, const Surface& s);
 
 
 void Glut::updateGLWindow(Surface surface) { // glArea.surface
+    cout << "     Glut::updateGLWindow " << surface << endl;
     if (winGL < 0) return;
     glutSetWindow(winGL);
     glutPositionWindow(surface.x, surface.y);
@@ -23,28 +25,43 @@ void Glut::updateGLWindow(Surface surface) { // glArea.surface
 }
 
 void Glut::on_resize_window(int w, int h) { // resize top window
+    cout << "  Glut::on_resize_window " << endl;
     topWinSize[0] = w;
     topWinSize[1] = h;
 
     glutSetWindow(winUI);
+    glutReshapeWindow(topWinSize[0], topWinSize[1]);
     resizeSignal("glutResize", {0,0,topWinSize[0], topWinSize[1]});
-    //glutSetWindow(winUI);
-    //glutReshapeWindow(topWinSize[0], topWinSize[1]);
-
-    //glutSetWindow(winUI);
-    //signal( "glutRenderUI", {} );
 }
 
 void Glut::on_gl_display() {
+    cout << "  Glut::on_gl_display " << endl;
     if (winGL < 0) return;
     glutSetWindow(winGL);
+    int w = glutGet(GLUT_WINDOW_WIDTH); // calling glutGet somehow magically fixes the resize glitches..
+    int h = glutGet(GLUT_WINDOW_HEIGHT);
     signal( "glutRenderGL", {} );
 }
 
 void Glut::on_ui_display() {
+    cout << "  Glut::on_ui_display " << endl;
     if (winUI < 0) return;
     glutSetWindow(winUI);
     signal( "glutRenderUI", {} );
+}
+
+void Glut::on_gl_resize(int w, int h) {
+    cout << "  Glut::on_gl_resize " << w << ", " << h << endl;
+    if (winGL < 0) return;
+    glutSetWindow(winGL);
+    resizeSignal( "glutResizeGL", {0,0,w,h} );
+}
+
+void Glut::on_ui_resize(int w, int h) {
+    cout << "  Glut::on_ui_resize " << w << ", " << h << endl;
+    if (winUI < 0) return;
+    glutSetWindow(winUI);
+    resizeSignal( "glutResizeUI", {0,0,w,h} );
 }
 
 Glut::Glut() {}
@@ -54,6 +71,9 @@ Glut* glutInstance = 0;
 void onMainReshape(int w, int h) { glutInstance->on_resize_window(w,h); }
 void onUIDisplay() { glutInstance->on_ui_display(); }
 void onGLDisplay() { glutInstance->on_gl_display(); }
+
+void onUIReshape(int w, int h) { glutInstance->on_ui_resize(w, h); }
+void onGLReshape(int w, int h) { glutInstance->on_gl_resize(w, h); }
 
 void Glut::init(int argc, char** argv, Signal signal, ResizeSignal resizeSignal) {
     cout << "Glut::init" << endl;
@@ -77,18 +97,20 @@ void Glut::init(int argc, char** argv, Signal signal, ResizeSignal resizeSignal)
 
     glutInitWindowSize(topWinSize[0], topWinSize[1]);
     topWin = glutCreateWindow("PolyVR");
-
     glutReshapeFunc( onMainReshape );
 
     winUI = glutCreateSubWindow(topWin, 0, 0, topWinSize[0], topWinSize[1]);
     glutDisplayFunc( onUIDisplay );
+    glutReshapeFunc( onUIReshape );
 
     glutSetWindow(topWin);
     winGL = glutCreateSubWindow(topWin, 0,0,800,800);
     glutDisplayFunc( onGLDisplay );
+    glutReshapeFunc( onGLReshape );
 }
 
 void Glut::activateWindow(int i) {
+    cout << "  Glut::activateWindow " << i << endl;
     if (i == 1 && topWin > 0) glutSetWindow(topWin);
     if (i == 2 && winUI > 0) glutSetWindow(winUI);
     if (i == 3 && winGL > 0) glutSetWindow(winGL);
@@ -96,17 +118,27 @@ void Glut::activateWindow(int i) {
 
 void Glut::render() {
     //glutMainLoopEvent();
-
-    glutSetWindow(winGL);
-    glutPostRedisplay();
-    glutSetWindow(winUI);
-    glutPostRedisplay();
-
+    cout << " Glut render" << endl;
+    glutMainLoopEvent();
+    glutMainLoopEvent();
     glutMainLoopEvent();
 
     glutSetWindow(winGL);
+    glutPostRedisplay();
+    glutSetWindow(winUI);
+    glutPostRedisplay();
+
+    cout << " Glut process events" << endl;
+    glutMainLoopEvent();
+    glutMainLoopEvent();
+    glutMainLoopEvent();
+    glutMainLoopEvent(); // render again after window reshapes
+
+    glutSetWindow(winGL);
+    cout << " Glut swap win GL" << endl;
     glutSwapBuffers();
     glutSetWindow(winUI);
+    cout << " Glut swap win UI" << endl;
     glutSwapBuffers();
 }
 

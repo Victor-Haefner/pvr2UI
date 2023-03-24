@@ -14,6 +14,8 @@ void Editor::runWindow(int argc, char** argv) {
 
     addCallback("glutRenderUI", [&](Options){ imgui.render(); return true; } );
     addCallback("glutRenderGL", [&](Options){ imgui.renderGLArea(); return true; } );
+    addResizeCallback("glutResizeUI", [&](Surface s){ imgui.resizeUI(s); return true; } );
+    addResizeCallback("glutResizeGL", [&](Surface s){ imgui.resizeGL(s); return true; } );
     addCallback("widgetResize", [&](Options o){ imgui.onWidgetResize(o); return true; } );
     addResizeCallback("glutResize", [&](Surface s){ imgui.resizeUI(s); return true; } );
     addResizeCallback("glAreaResize", [&](Surface s){ glut.updateGLWindow(s); return true; } );
@@ -30,9 +32,14 @@ void Editor::runWindow(int argc, char** argv) {
 }
 
 void Editor::runMainLoop() {
+    static int i=0;
     while(true) {
+        cout << endl << " - - - frame " << i << " - - - " << endl;
+        imgui.tmpC = 0;
         glut.render();
+        i++;
         this_thread::sleep_for(chrono::milliseconds(16));
+        //this_thread::sleep_for(chrono::milliseconds(200));
     }
 }
 

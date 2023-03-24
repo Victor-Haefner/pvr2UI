@@ -21,15 +21,15 @@ void Surface::compute(const Surface& parent, const Rectangle& area) {
     height = max(height, 10);
     x = round( parent.width * area.left );
     y = round( parent.height * (1.0 - area.top) );
-    cout << " compute surface " << width << ", " << height << ", " << x << ", " << y << endl;
+    //cout << " compute surface " << width << ", " << height << ", " << x << ", " << y << endl;
 }
 
 void Widget::updateLayout(const Surface& newSize) {
-    cout << " updateLayout " << newSize.y + newSize.height << "/800?   " << layout << ", parentSurface: " << parentSurface;
+    //cout << " updateLayout " << newSize.y + newSize.height << "/800?   " << layout << ", parentSurface: " << parentSurface;
     layout.left  = float(newSize.x - parentSurface.x) / parentSurface.width;
     layout.right = float(newSize.x + newSize.width - parentSurface.x) / parentSurface.width;
     layout.top    = 1.0 - float(newSize.y - parentSurface.y) / parentSurface.height;
     layout.bottom = 1.0 - float(newSize.y + newSize.height - parentSurface.y) / parentSurface.height;
     surface.compute(parentSurface, layout);
-    cout << ", new size: " << newSize << " -> " << layout << endl;
+    //cout << ", new size: " << newSize << " -> " << layout << endl;
 }

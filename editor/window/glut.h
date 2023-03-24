@@ -32,6 +32,8 @@ class Glut {
         void on_resize_window(int w, int h);
         void on_ui_display();
         void on_gl_display();
+        void on_ui_resize(int w, int h);
+        void on_gl_resize(int w, int h);
 
         void updateGLWindow(Surface surface);
 };
